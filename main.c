@@ -1,5 +1,6 @@
 #include "monty.h"
 
+glob_t glob;
 
 /**
  * main - entry point for the program
