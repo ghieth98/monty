@@ -4,6 +4,7 @@
  * add_node - adds a new node at of the stack
  * @stack: pointer to the pointer at the top the stack
  * @n: value to be added to the new node
+ * Return: pointer to the added node
  */
 
 stack_t *add_node(stack_t **stack, const int n)

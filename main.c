@@ -3,12 +3,12 @@
 glob_t glob;
 
 /**
- * main - entry point for the program
+ * main - entry point for the monty program
  * @argc: number of command line arguments
- * @argv: array of command line arguments strings
- * Return: 0 on Success
+ * @argv: array of command line argument strings
+ *
+ * Return: 0 on success, non-zero on failure
  */
-
 int main(int argc, char *argv[])
 {
 	stack_t *stack = NULL;

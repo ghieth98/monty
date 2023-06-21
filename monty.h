@@ -57,7 +57,7 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-/* Prototypes */
+/* prototypes */
 void execute_file(stack_t **stack);
 void execute_ops(char *opcode, stack_t **stack, unsigned int line_number);
 

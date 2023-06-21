@@ -36,6 +36,11 @@ void execute_ops(char *opcode, stack_t **stack, unsigned int line_number)
 	instruction_t instructions[] = {
 		{"push", op_push},
 		{"pall", op_pall},
+		{"pint", op_pint},
+		{"pop", op_pop},
+		{"swap", op_swap},
+		{"nop", op_nop},
+		{"add", op_add}
 	};
 	int i;
 
