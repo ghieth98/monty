@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	glob.file = fopen(argv[1], "r");
 	if (glob.file == NULL)
 	{
-		fprintf(stderr, "ERROR: Can't open file %s\n", argv[1]);
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
 

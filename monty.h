@@ -59,7 +59,7 @@ typedef struct instruction_s
 
 /* Prototypes */
 void execute_file(stack_t **stack);
-void execute_ops(char *operation, stack_t **stack, unsigned int line_number);
+void execute_ops(char *opcode, stack_t **stack, unsigned int line_number);
 
 void op_push(stack_t **stack, unsigned int line_number);
 void op_pall(stack_t **stack, unsigned int line_number);
