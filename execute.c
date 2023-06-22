@@ -40,7 +40,14 @@ void execute_ops(char *opcode, stack_t **stack, unsigned int line_number)
 		{"pop", op_pop},
 		{"swap", op_swap},
 		{"nop", op_nop},
-		{"add", op_add}
+		{"add", op_add},
+		{"sub", op_sub},
+		{"div", op_div},
+		{"mul", op_mul},
+		{"mod", op_mod},
+		{"pchar", op_pchar},
+		{"pstr", op_pstr},
+		{NULL, NULL}
 	};
 	int i;
 
