@@ -1,19 +1,23 @@
 #include "monty.h"
 
 /**
- * op_pall - prints all  values on the stack
+ * pall - prints all  values on the stack
  * @stack: pointer to the top of the stack
  * @line_number: line number of the operation code
  */
 
-void op_pall(stack_t **stack, unsigned int line_number)
+void pall(stack_t **stack, unsigned int line_number)
 {
-	stack_t *current = *stack;
+	stack_t *tmp = NULL;
 
-	while (current != NULL)
+	if (!stack || !*stack)
+		return;
+
+	(void) line_number;
+	tmp = *stack;
+	while (tmp != NULL)
 	{
-		printf("%d\n", current->n);
-		current = current->next;
-		(void)line_number;
+		printf("%d\n", tmp->n);
+		tmp = tmp->next;
 	}
 }

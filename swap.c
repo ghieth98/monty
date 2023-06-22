@@ -1,31 +1,34 @@
 #include "monty.h"
 
 /**
- * op_swap - swap the top element of the stack
+ * swap - swap the top element of the stack
  * @stack: pointer to the top of the stack
  * @line_number: line number of the operation code
  */
 
-void op_swap(stack_t **stack, unsigned int line_number)
+void swap(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
+	stack_t *tmp = NULL;
 
 	if (*stack == NULL || (*stack)->next == NULL)
 	{
-		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
-		free(glob.line);
-		free_stack(*stack);
+		printf("L%u: can't swap, stack too short\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
-	temp = (*stack)->next;
-	(*stack)->next = temp->next;
+	tmp = (*stack)->next;
+	if (tmp->next != NULL)
+	{
+		(*stack)->next = tmp->next;
+		(*stack)->next->prev = *stack;
 
-	if (temp->next != NULL)
-
-	temp->next->prev = *stack;
-	temp->prev = NULL;
-	temp->next = *stack;
-	(*stack)->prev = temp;
-	*stack = temp;
+	}
+	else
+	{
+		tmp->prev->prev = tmp;
+		tmp->prev->next = NULL;
+	}
+	tmp->prev = NULL;
+	tmp->next = *stack;
+	(*stack) = tmp;
 }

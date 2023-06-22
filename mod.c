@@ -1,30 +1,26 @@
 #include "monty.h"
 
 /**
- * op_mod - computes the second and first elemnt of the stack
+ * _mod - computes the second and first elemnt of the stack
  * @stack: pointer to the top of the stacvk
  * @line_number: line number of the current
  */
 
-void op_mod(stack_t **stack, unsigned int line_number)
+void _mod(stack_t **stack, unsigned int line_number)
 {
-	int a, b;
 
-	if (*stack == NULL || (*stack)->next == NULL)
+	if (stack == NULL || *stack == NULL)
 	{
-		fprintf(stderr, "L%d: can't mod, stack too short\n", line_number);
+		printf("L%u: can't mod, stack too short\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
-	a = (*stack)->n;
-	b = (*stack)->next->n;
-
-	if (a == 0)
+	if ((*stack)->n == 0 || (*stack)->next->n == 0)
 	{
-		fprintf(stderr, "L%d: division by zero\n", line_number);
-		exit(EXIT_FAILURE);
+		printf("L%u: division by zero\n", line_number);
 	}
-
-	(*stack)->next->n = b % a;
-	op_pop(stack, line_number);
+	(*stack)->next->n %= (*stack)->n;
+	(*stack) = (*stack)->next;
+	free((*stack)->prev);
+	(*stack)->prev = NULL;
 }

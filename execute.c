@@ -1,70 +1,36 @@
 #include "monty.h"
 
-
 /**
- * execute_file - reads and execute opeartions from a file
- * @stack: pointer to the top of the stack
+ * get_op_func - function to select correct operation function
+ * @token1: 1st bytecode input (opcode)
+ * Return: pointer to correct operation function
  */
-
-void execute_file(stack_t **stack)
+void (*get_op_func(char *token1))(stack_t **stack, unsigned int line_number)
 {
-	char *opcode = NULL;
-	size_t len = 0;
-	ssize_t nread;
-	unsigned int line_number = 0;
-
-	while ((nread = getline(&glob.line, &len, glob.file)) != -1)
-	{
-		line_number++;
-		opcode = strtok(glob.line, " /t/r/n/a");
-		glob.arg = strtok(NULL, " /n/t");
-		if (opcode == NULL || *opcode == '#')
-			continue;
-		execute_ops(opcode, stack, line_number);
-	}
-}
-
-/**
- * execute_ops - execute an operation code
- * @opcode: opertion code to execute
- * @stack: pointer to the top of the stack
- * @line_number: line number of the code of the operation
- */
-
-void execute_ops(char *opcode, stack_t **stack, unsigned int line_number)
-{
-	instruction_t instructions[] = {
-		{"push", op_push},
-		{"pall", op_pall},
-		{"pint", op_pint},
-		{"pop", op_pop},
-		{"swap", op_swap},
-		{"nop", op_nop},
-		{"add", op_add},
-		{"sub", op_sub},
-		{"div", op_div},
-		{"mul", op_mul},
-		{"mod", op_mod},
-		{"pchar", op_pchar},
-		{"pstr", op_pstr},
+	instruction_t instruction_s[] = {
+		{"pop", pop},
+		{"pall", pall},
+		{"pint", pint},
+		{"swap", swap},
+		{"add", _add},
+		{"sub", _sub},
+		{"mul", _mul},
+		{"div", _div},
+		{"mod", _mod},
+		{"pchar", pchar},
+		{"pstr", pstr},
+		{"nop", nop},
+		{"rotl", rotl},
+		{"rotr", rotr},
 		{NULL, NULL}
 	};
-	int i;
+	int i = 0;
 
-	for (i = 0; instructions[i].opcode != NULL; i++)
+	while (instruction_s[i].f != NULL)
 	{
-		if (strcmp(opcode, instructions[i].opcode) == 0)
-		{
-			instructions[i].f(stack, line_number);
-			return;
-		}
+		if (strcmp(token1, instruction_s[i].opcode) == 0)
+			return (instruction_s[i].f);
+		i++;
 	}
-
-	fprintf(stderr, "L%d: unknown instruct %s\n", line_number, opcode);
-	free_stack(*stack);
-	fclose(glob.file);
-	free(glob.line);
-	exit(EXIT_FAILURE);
+	return (NULL);
 }
-
-

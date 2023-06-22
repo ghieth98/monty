@@ -1,56 +1,45 @@
 #include "monty.h"
 
 /**
- * op_push - pushes an element onto the stack
- * @stack: pointer to the top of the stack
- * @line_number: current line number of operation code
+ * is_number - iterates each character of string to check of isdigit
+ * @n: integer
+ * Return: 0 if is number, else -1 if not
  */
-
-void op_push(stack_t **stack, unsigned int line_number)
+int is_number(const char *n)
 {
-	int n;
+	int i = 0;
 
-	if (glob.arg == NULL || !is_number(glob.arg))
+	if (*n == '-')
+		i = 1;
+	for (; *(n + i) != '\0'; i++)
 	{
-		fprintf(stderr, "L%d: usage: push integer\n", line_number);
-		free_stack(*stack);
-		fclose(glob.file);
-		free(glob.line);
-		exit(EXIT_FAILURE);
+		if (isdigit(*(n + i)) == 0)
+			return (-1);
 	}
-
-	n = atoi(glob.arg);
-	if (add_node(stack, n) == NULL)
-	{
-		fprintf(stderr, "Error: malloc Error\n");
-		free_stack(*stack);
-		fclose(glob.file);
-		free(glob.line);
-		exit(EXIT_FAILURE);
-	}
+	return (0);
 }
-
 /**
- * is_number - checks if a string is a number
- * @str: string to check
- *
- * Return: 1 if string is a number, 0 otherwise
+ * push - adds node to the start of dlinkedlist
+ * @stack: head of linked list (node at the bottom of stack)
+ * @line_number: bytecode line number
+ * @n: integer
  */
-int is_number(char *str)
+void push(stack_t **stack, unsigned int line_number, const char *n)
 {
-	if (str == NULL || *str == '\0')
-		return (0);
-
-	if (*str == '-' || *str == '+')
-		str++;
-
-	while (*str != '\0')
+	if (!stack)
+		return;
+	if (is_number(n) == -1)
 	{
-		if (*str < '0' || *str > '9')
-			return (0);
-
-		str++;
+		printf("L%u: usage: push integer\n", line_number);
+		free_dlist(stack);
+		exit(EXIT_FAILURE);
 	}
-
-	return (1);
+	else
+	{
+		if (add_end_node(stack, atoi(n)) == -1)
+		{
+			free_dlist(stack);
+			exit(EXIT_FAILURE);
+		}
+	}
 }

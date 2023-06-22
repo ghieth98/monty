@@ -11,23 +11,6 @@
 #include <fcntl.h>
 
 /**
- * struct global_s - variables -> args, file, line content
- * @arg: value
- * @line: input line content
- * @file: pointer to monty file
- *
- * Description: variables that carries values through the program
- */
-typedef struct global_s
-{
-	char *arg;
-	FILE *file;
-	char *line;
-} glob_t;
-
-extern glob_t glob;
-
-/**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
  * @prev: points to the previous element of the stack (or queue)
@@ -58,25 +41,26 @@ typedef struct instruction_s
 } instruction_t;
 
 /* prototypes */
-void execute_file(stack_t **stack);
-void execute_ops(char *opcode, stack_t **stack, unsigned int line_number);
+void (*get_op_func(char *token1))(stack_t **stack, unsigned int line_number);
 
-void op_push(stack_t **stack, unsigned int line_number);
-void op_pall(stack_t **stack, unsigned int line_number);
-void op_pint(stack_t **stack, unsigned int line_number);
-void op_pop(stack_t **stack, unsigned int line_number);
-void op_swap(stack_t **stack, unsigned int line_number);
-void op_add(stack_t **stack, unsigned int line_number);
-void op_nop(stack_t **stack, unsigned int line_number);
-void op_sub(stack_t **stack, unsigned int line_number);
-void op_div(stack_t **stack, unsigned int line_number);
-void op_mul(stack_t **stack, unsigned int line_number);
-void op_mod(stack_t **stack, unsigned int line_number);
-void op_pchar(stack_t **stack, unsigned int line_number);
-void op_pstr(stack_t **stack, unsigned int line_number);
+void push(stack_t **stack, unsigned int line_number, const char *n);
+void pall(stack_t **stack, unsigned int line_number);
+void pint(stack_t **stack, unsigned int line_number);
+void pop(stack_t **stack, unsigned int line_number);
+void swap(stack_t **stack, unsigned int line_number);
+void _add(stack_t **stack, unsigned int line_number);
+void nop(stack_t **stack, unsigned int line_number);
+void _sub(stack_t **stack, unsigned int line_number);
+void _div(stack_t **stack, unsigned int line_number);
+void _mul(stack_t **stack, unsigned int line_number);
+void _mod(stack_t **stack, unsigned int line_number);
+void pchar(stack_t **stack, unsigned int line_number);
+void pstr(stack_t **stack, unsigned int line_number);
+void rotl(stack_t **stack, unsigned int line_number);
+void rotr(stack_t **stack, unsigned int line_number);
 
-stack_t *add_node(stack_t **stack, const int n);
-int is_number(char *str);
-void free_stack(stack_t *stack);
+int add_end_node(stack_t **stack, int n);
+void delete_end_node(stack_t **stack);
+void free_dlist(stack_t **stack);
 
 #endif
