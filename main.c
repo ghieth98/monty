@@ -9,10 +9,10 @@
 int main(int argc, char *argv[])
 {
 	int fd, ispush = 0;
-	unsigned int line_number = 1;
+	unsigned int line = 1;
 	ssize_t n_read;
 	char *buffer, *token;
-	stack_t *stack = NULL;
+	stack_t *h = NULL;
 
 	if (argc != 2)
 	{
@@ -40,10 +40,10 @@ int main(int argc, char *argv[])
 	{
 		if (ispush == 1)
 		{
-			push(&stack, line_number, token);
+			push(&h, line, token);
 			ispush = 0;
 			token = strtok(NULL, "\n\t\a\r ;:");
-			line_number++;
+			line++;
 			continue;
 		}
 		else if (strcmp(token, "push") == 0)
@@ -56,20 +56,19 @@ int main(int argc, char *argv[])
 		{
 			if (get_op_func(token) != 0)
 			{
-				get_op_func(token)(&stack, line_number);
+				get_op_func(token)(&h, line);
 			}
 			else
 			{
-				free_dlist(&stack);
-				printf("L%d: unknown instruction %s\n", line_number, token);
+				free_dlist(&h);
+				printf("L%d: unknown instruction %s\n", line, token);
 				exit(EXIT_FAILURE);
 			}
 		}
-		line_number++;
+		line++;
 		token = strtok(NULL, "\n\t\a\r ;:");
 	}
-	free_dlist(&stack);
-	free(buffer);
+	free_dlist(&h); free(buffer);
 	close(fd);
 	return (0);
 }
