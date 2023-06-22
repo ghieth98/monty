@@ -1,61 +1,105 @@
 #include "monty.h"
+#include <stdlib.h>
 
 /**
- * is_number - iterates each character of string to check of isdigit
- * @n: integer
- * Return: 0 if is number, else -1 if not
+ * push - adds a new node to the beginning of the linked list
+ * @head: beginning of linked list
+ * @n: value of new node
+ * Return: the new node that was added
  */
-int is_number(const char *n)
+stack_t *push(stack_t **head, int n)
 {
-	int i = 0;
+	stack_t *new;
 
-	if (*n == '-')
-		i = 1;
-	for (; *(n + i) != '\0'; i++)
+	new = malloc(sizeof(stack_t));
+	if (!new)
 	{
-		if (isdigit(*(n + i)) == 0)
-			return (-1);
+		if (*head != NULL)
+			free_stack(*head);
+		fprintf(stderr, "Error: malloc failed\n");
+		exit(EXIT_FAILURE);
 	}
-	return (0);
+	new->n = n;
+	new->next = *head;
+	new->prev = NULL;
+
+	if (*head)
+		(*head)->prev = new;
+
+	*head = new;
+
+	return (new);
 }
+
 /**
- * push - adds node to the start of dlinkedlist
- * @h: head of linked list (node at the bottom of stack)
- * @line_number: bytecode line number
- * @n: integer
+ * pall - prints doubly linked list
+ * @stack: start of doubly linked list
+ * @line_n: line number
  */
-void push(stack_t **h, unsigned int line_number, const char *n)
+void pall(stack_t **stack, unsigned int line_n)
 {
+	stack_t *h = *stack;
+
+	if (!stack)
+	{
+		fprintf(stderr, "L%d: can't pall, stack empty\n", line_n);
+		exit(EXIT_FAILURE);
+	}
+	for (; h; h = h->next)
+		fprintf(stdout, "%d\n", h->n);
+}
+
+/**
+ * pint - prints first node of linked list
+ * @stack: first node of linked list
+ * @line_n: line number
+ */
+void pint(stack_t **stack, unsigned int line_n)
+{
+	stack_t *h = *stack;
+
 	if (!h)
-		return;
-	if (is_number(n) == -1)
 	{
-		printf("L%u: usage: push integer\n", line_number);
-		free_dlist(h);
+		fprintf(stderr, "L%d: can't pint, stack empty\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		if (add_end_node(h, atoi(n)) == -1)
-		{
-			free_dlist(h);
-			exit(EXIT_FAILURE);
-		}
-	}
+	fprintf(stdout, "%d\n", h->n);
+
 }
+
 /**
- * pop - removes node at front of dlinkedlist
- * @h: head of linked list (node at the bottom of stack)
- * @line_number: bytecode line number
+ * pop - removes first node of a linked list
+ * @stack: first node of linked list
+ * @line_n: line number
  */
-void pop(stack_t **h, unsigned int line_number)
+void pop(stack_t **stack, unsigned int line_n)
 {
-	if (h == NULL || *h == NULL)
+	stack_t *delete = *stack;
+
+	if (!delete)
 	{
-		printf("L%u: can't pop an empty stack\n", line_number);
-		free_dlist(h);
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	else
-		delete_end_node(h);
+	*stack = delete->next;
+	free(delete);
+}
+
+/**
+  * swap - swaps the top two elements of the stack
+  * @stack: first node of linked list
+  * @line_n: line number
+  */
+void swap(stack_t **stack, unsigned int line_n)
+{
+	int hold = (*stack)->n;
+
+	if (!(stack) || !(*stack) || !(*stack)->next)
+	{
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_n);
+		exit(EXIT_FAILURE);
+	}
+	(*stack)->n = (*stack)->next->n;
+	(*stack)->next->n = hold;
 }

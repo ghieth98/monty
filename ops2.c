@@ -1,77 +1,63 @@
 #include "monty.h"
-/**
- * swap - swap locations of previous stack with the top stack
- * @h: node to be swapped
- * @line_number: node number
- */
-void swap(stack_t **h, unsigned int line_number)
-{
-	stack_t *tmp = NULL;
 
-	if (*h == NULL || (*h)->next == NULL)
+/**
+ * nop - Does nothing.
+ * @stack: Unused.
+ * @line_n: Unused.
+ */
+void nop(stack_t **stack, unsigned int line_n)
+{
+	(void)*stack;
+	(void)line_n;
+}
+
+/**
+ * pchar - Print the char based on ascii value.
+ * @stack: beginning of linked list.
+ * @line_n: line number.
+ */
+void pchar(stack_t **stack, unsigned int line_n)
+{
+	stack_t *h = *stack;
+
+	if (!h)
 	{
-		printf("L%u: can't swap, stack too short\n", line_number);
+		fprintf(stderr, "L%d: can't pchar, stack empty\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	tmp = (*h)->next;
-	if (tmp->next != NULL)
+	if (!(h->n > 64 && h->n < 91) && !(h->n > 96 && h->n < 123))
 	{
-		(*h)->next = tmp->next;
-		(*h)->next->prev = *h;
-
+		fprintf(stderr, "L%d: can't pchar, value out of range\n", line_n);
+		exit(EXIT_FAILURE);
 	}
-	else
-	{
-		tmp->prev->prev = tmp;
-		tmp->prev->next = NULL;
-	}
-	tmp->prev = NULL;
-	tmp->next = *h;
-	(*h) = tmp;
+	printf("%c\n", (char)h->n);
 }
+
 /**
- * rotl - rotate so top of stack becomes last one, second becomes first one
- * @h: node to be rotated
- * @line_number: node number
+ * pstr - Print string based of ascii values in linked list.
+ * @stack: Beginning of linked list.
+ * @line_n: Line number.
  */
-void rotl(stack_t **h, unsigned int line_number)
+void pstr(stack_t **stack, unsigned int line_n)
 {
-	stack_t *tmp;
+	stack_t *h = *stack;
+	char string[1000];
+	int i = 0;
+	(void)line_n;
 
-	(void) line_number;
-
-	if ((*h)->next != NULL)
+	memset(string, 0, 1000);
+	if (!h)
+		printf("\n");
+	while (h)
 	{
-		tmp = *h;
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		(*h)->prev = tmp;
-		tmp->next = *h;
-		(*h)->next->prev = NULL;
-		*h = (*h)->next;
-		tmp->next->next = NULL;
+		/*if (h->n < 1 && h->n > 127)*/
+		if (!(h->n > 64 && h->n < 91) && !(h->n > 96 && h->n < 123))
+		{
+			break;
+		}
+		string[i] = (char)h->n;
+		i++;
+		h = h->next;
 	}
-}
-/**
- * rotr - rotate so only bottom node of stack becomes first one
- * @h: node to be rotated
- * @line_number: node number
- */
-void rotr(stack_t **h, unsigned int line_number)
-{
-	stack_t *tmp;
-
-	(void) line_number;
-
-	if ((*h)->next != NULL)
-	{
-		tmp = *h;
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		(*h)->prev = tmp;
-		tmp->next = *h;
-		tmp->prev->next = NULL;
-		tmp->prev = NULL;
-		(*h) = (*h)->prev;
-	}
+	printf("%s\n", string);
 }

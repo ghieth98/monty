@@ -1,74 +1,48 @@
 #include "monty.h"
-
 /**
- * main - entry into interpreter
- * @argc: argc counter
- * @argv: arguments
- * Return: 0 on success
+ * make_struct - Set values for struct.
+ * @argv: Argument list.
+ * Return: Struct for buffers.
+ */
+buf_struct *make_struct(char *argv[])
+{
+	static buf_struct a;
+
+	a.argv = argv;
+	memset(a.read_buff, 0, sizeof(a.read_buff));
+	memset(a.list_cmd, 0, sizeof(a.list_cmd));
+	memset(a.tok_cmd, 0, sizeof(a.tok_cmd));
+
+	return (&a);
+}
+/**
+ * main - Takes argument list and executes file given.
+ * @argc: Argument count.
+ * @argv: List of arguments.
+ * Return: 0.
  */
 int main(int argc, char *argv[])
 {
-	int fd, ispush = 0;
-	unsigned int line = 1;
-	ssize_t n_read;
-	char *buffer, *token;
-	stack_t *h = NULL;
+	int fd;
+	buf_struct *a;
+
+	a = make_struct(argv);
 
 	if (argc != 2)
 	{
-		printf("USAGE: monty file\n");
+		fprintf(stderr, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
+	while ((fd = open(argv[1], O_RDONLY)) == -1)
 	{
-		printf("Error: Can't open file %s\n", argv[1]);
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
-	buffer = malloc(sizeof(char) * 10000);
-	if (!buffer)
-		return (0);
-	n_read = read(fd, buffer, 10000);
-	if (n_read == -1)
-	{
-		free(buffer);
-		close(fd);
-		exit(EXIT_FAILURE);
-	}
-	token = strtok(buffer, "\n\t\a\r ;:");
-	while (token != NULL)
-	{
-		if (ispush == 1)
-		{
-			push(&h, line, token);
-			ispush = 0;
-			token = strtok(NULL, "\n\t\a\r ;:");
-			line++;
-			continue;
-		}
-		else if (strcmp(token, "push") == 0)
-		{
-			ispush = 1;
-			token = strtok(NULL, "\n\t\a\r ;:");
-			continue;
-		}
-		else
-		{
-			if (get_op_func(token) != 0)
-			{
-				get_op_func(token)(&h, line);
-			}
-			else
-			{
-				free_dlist(&h);
-				printf("L%d: unknown instruction %s\n", line, token);
-				exit(EXIT_FAILURE);
-			}
-		}
-		line++;
-		token = strtok(NULL, "\n\t\a\r ;:");
-	}
-	free_dlist(&h); free(buffer);
+
+	read(fd, a->read_buff, 4096);
 	close(fd);
+	split_newline(a);
+	exec_loop(a);
+
 	return (0);
 }

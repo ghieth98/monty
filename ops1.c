@@ -1,91 +1,97 @@
 #include "monty.h"
-/**
- * pall - print all nodes in stack
- * @h: head of list
- * @line_number: bytecode line number
- */
-void pall(stack_t **h, unsigned int line_number)
-{
-	stack_t *tmp = NULL;
 
-	if (!h || !*h)
-		return;
-
-	(void) line_number;
-	tmp = *h;
-	while (tmp != NULL)
-	{
-		printf("%d\n", tmp->n);
-		tmp = tmp->next;
-	}
-}
 /**
- * pint - print top node in stack
- * @h: head of list
- * @line_number: bytecode line number
- */
-void pint(stack_t **h, unsigned int line_number)
+  * add - adds the top two elements of the stack
+  * @stack: start of doubly linked list
+  * @line_n: line number
+  */
+void add(stack_t **stack, unsigned int line_n)
 {
-	if (!h || !*h)
+	if (!(*stack) || !(*stack)->next)
 	{
-		printf("L%u: can't pint, stack empty\n", line_number);
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	printf("%d\n", (*h)->n);
-
+	(*stack)->next->n += (*stack)->n;
+	pop(stack, line_n);
 }
+
 /**
- * pchar - print top node in stack as ascii letter
- * @h: head of list
- * @line_number: bytecode line number
+ * sub - adds the top two elements of the stack
+ * @stack: start of doubly linked list
+ * @line_n: line number
  */
-void pchar(stack_t **h, unsigned int line_number)
+void sub(stack_t **stack, unsigned int line_n)
 {
-	if (!h || !*h)
+	if (!(*stack) || !(*stack)->next)
 	{
-		printf("L%u: can't pchar, stack empty\n", line_number);
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't sub, stack too short\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	if (((*h)->n) >= 0 && ((*h)->n) <= 127)
-		printf("%c\n", (*h)->n);
-	else
-	{
-		printf("L%u: can't pchar, value out of range\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-
+	(*stack)->next->n -= (*stack)->n;
+	pop(stack, line_n);
 }
 /**
- * pstr - print top nodes in stack as ascii letter
- * and stop only if end of stack, node is 0, or not in ascii table
- * @h: head of list
- * @line_number: bytecode line number
+ * _div - adds the top two elements of the stack
+ * @stack: start of doubly linked list
+ * @line_n: line number
  */
-void pstr(stack_t **h, unsigned int line_number)
+void _div(stack_t **stack, unsigned int line_n)
 {
-	stack_t *tmp;
-
-	if (!h || !*h)
+	if (!(*stack) || !(*stack)->next)
 	{
-		printf("L%u: can't pchar, stack empty\n", line_number);
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't div, stack too short\n", line_n);
 		exit(EXIT_FAILURE);
 	}
-	tmp = *h;
-	while ((tmp != NULL) && (tmp->n != 0) &&
-	       (tmp->n >= 0) && (tmp->n <= 127))
+	if ((*stack)->n == 0)
 	{
-		printf("%c", (tmp)->n);
-		tmp = tmp->next;
+		free_stack(*stack);
+		fprintf(stderr, "L%d: division by zero\n", line_n);
+		exit(EXIT_FAILURE);
 	}
-	printf("\n");
+	(*stack)->next->n /= (*stack)->n;
+	pop(stack, line_n);
 }
+
 /**
- * nop - do nothing
- * @h: head of list
- * @line_number: bytecode line number
+ * mod - adds the top two elements of the stack
+ * @stack: start of doubly linked list
+ * @line_n: line number
  */
-void nop(stack_t **h, unsigned int line_number)
+void mod(stack_t **stack, unsigned int line_n)
 {
-	(void) h;
-	(void) line_number;
+	if (!(*stack) || !(*stack)->next)
+	{
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't mod, stack too short\n", line_n);
+		exit(EXIT_FAILURE);
+	}
+	if ((*stack)->n == 0)
+	{
+		free_stack(*stack);
+		fprintf(stderr, "L%d: division by zero\n", line_n);
+		exit(EXIT_FAILURE);
+	}
+	(*stack)->next->n %= (*stack)->n;
+	pop(stack, line_n);
+}
+
+/**
+ * mul - adds the top two elements of the stack
+ * @stack: start of doubly linked list
+ * @line_n: line number
+ */
+void mul(stack_t **stack, unsigned int line_n)
+{
+	if (!(*stack) || !(*stack)->next)
+	{
+		free_stack(*stack);
+		fprintf(stderr, "L%d: can't mul, stack too short\n", line_n);
+		exit(EXIT_FAILURE);
+	}
+	(*stack)->next->n *= (*stack)->n;
+	pop(stack, line_n);
 }

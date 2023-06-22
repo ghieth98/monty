@@ -1,77 +1,87 @@
 #include "monty.h"
+
 /**
- * add_end_node - add node to front of doubly linked list
- * @h: pointer to head of list
- * @n: node data
- * Return: 0 if success, -1 if failed
+ * free_stack - free doubly linked list
+ * @head: start of doubly linked list
  */
-int add_end_node(stack_t **h, int n)
+
+void free_stack(stack_t *head)
 {
-	stack_t *new;
+	stack_t *hold;
 
-	if (!h)
-		return (-1);
+		while (head)
+		{
+			hold = head;
+			head = (*head).next;
+			free(hold);
+		}
+}
 
-	/* malloc and set new node data */
-	new = malloc(sizeof(struct stack_s));
-	if (!new)
-	{
-		printf("Error: malloc failed");
-		return (-1);
-	}
-	new->n = n;
+/**
+  * digits_only - checks for non integer types in a string
+  * @str: string to check
+  * Return: 0 if it contains non integer type 1 if only integer type
+  */
+int digits_only(char *str)
+{
+	int i;
 
-	/* account for empty linked list */
-	if (*h == NULL)
+	for (i = 0; str[i]; i++)
+		if (isdigit(str[i]) == 0)
+		{
+			if (str[i] == '-' && i == 0)
+				continue;
+			return (0);
+		}
+	return (1);
+}
+
+/**
+ * split_newline - Tokenizes read buffer on newlines.
+ * @a: Global struct for buffers.
+ * Return: Tokenized list of commands.
+ */
+char **split_newline(buf_struct *a)
+{
+	char delim[] = "\n";
+	char *token;
+	int i = 0;
+
+	token = strtok(a->read_buff, delim);
+
+	while (token != NULL)
 	{
-		*h = new;
-		new->next = NULL;
-		new->prev = NULL;
+		a->list_cmd[i] = token;
+		token = strtok(NULL, delim);
+		i++;
 	}
-	else /* insert to front */
-	{
-		new->next = *h;
-		(*h)->prev = new;
-		*h = new;
-	}
-	return (0);
+	if (a->list_cmd[0] == NULL)
+		return (NULL);
+	return (a->list_cmd);
 }
 /**
- * delete_end_node - deletes node at end of doubly linked list
- * @h: pointer to head of doubly linked list
+ * split_spaces - Tokenize each command from its value.
+ * @buff: Index from first tokenized list of commands.
+ * @a: Global struct for buffers.
+ * Return: Tokenized command.
  */
-void delete_end_node(stack_t **h)
+char **split_spaces(char *buff, buf_struct *a)
 {
-	stack_t *del = NULL;
+	char delim[] = " \t";
+	char *token;
+	int i = 0;
 
-	/* account for only one node in list */
-	del = *h;
-	if ((*h)->next == NULL)
+	token = strtok(buff, delim);
+	while (token != NULL && i < 2)
 	{
-		*h = NULL;
-		free(del);
+		a->tok_cmd[i] = token;
+		token = strtok(NULL, delim);
+		i++;
 	}
-	else /* else delete front, and link correctly */
-	{
-		*h = (*h)->next;
-		(*h)->prev = NULL;
-		free(del);
-	}
-}
-/**
- * free_dlist - frees a doubly linked list with only int data, no strings
- * @h: pointer to head of list
- */
-void free_dlist(stack_t **h)
-{
-	/* return if empty list */
-	if (!h)
-		return;
-
-	while (*h && (*h)->next)
-	{
-		*h = (*h)->next;
-		free((*h)->prev);
-	}
-	free(*h);
+	a->tok_cmd[i] = NULL;
+	if (a->tok_cmd[0] == NULL)
+		return (NULL);
+	if (strncmp(a->tok_cmd[0], "#", 1) == 0)
+		a->tok_cmd[0] = "nop";
+	return (a->tok_cmd);
 }
